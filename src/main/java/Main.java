@@ -1,18 +1,22 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
-        //Testing Network class from AccuWeather API
-        String apiKey = "JF2eXKsL6C6qjsTAryd4KNiU7ToM0jJM";
-        String url = "http://dataservice.accuweather.com/locations/v1/postalcodes/search?";
 
-        Map<String, String> map = new HashMap<>();
-        map.put("apikey", apiKey);
-        map.put("q", "46975");
+        try {
+            SputnikNews sputnikNews = new SputnikNews("Sputnik News", "www.sputniknews.com", "https://sputniknews.com/export/rss2/archive/index.xml");
+            sputnikNews.fetchArticles();
 
-        Network network = new Network();
-        network.httpGet(url, map);
+            ArrayList<Article> articles = sputnikNews.getArticles();
+            for(Article article: articles) {
+                System.out.println(article.toString()+ "\n");
+            }
+
+            System.out.println(articles.get(0).getArticleText());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
