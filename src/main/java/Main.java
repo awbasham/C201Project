@@ -1,22 +1,19 @@
-import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
-
         try {
             SputnikNews sputnikNews = new SputnikNews("Sputnik News", "www.sputniknews.com", "https://sputniknews.com/export/rss2/archive/index.xml");
             sputnikNews.fetchArticles();
 
-            ArrayList<Article> articles = sputnikNews.getArticles();
-            for(Article article: articles) {
-                System.out.println(article.toString()+ "\n");
-            }
+            VeteransToday veteransToday = new VeteransToday("Veterans Today", "www.veteranstoday.com", "https://www.veteranstoday.com/feed/");
+            veteransToday.fetchArticles();
 
-            System.out.println(articles.get(0).getArticleText());
+            Utilities.articlesToJsonFile(veteransToday.getArticles(), veteransToday.getName().replaceAll(" ", ""));
+            Utilities.articlesToJsonFile(sputnikNews.getArticles(), sputnikNews.getName().replaceAll(" ", ""));
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error");
         }
     }
 }
