@@ -9,14 +9,17 @@ public class Main {
             sputnikNews.fetchArticles();
 
             ArrayList<Article> articles = sputnikNews.getArticles();
-            for(Article article: articles) {
+            /*for(Article article: articles) {
                 System.out.println(article.toString()+ "\n");
-            }
+            }*/
 
-            System.out.println(articles.get(0).getArticleText());
+            Utilities.articlesToJsonFile(articles, sputnikNews.getName().replaceAll(" ", ""));
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error");
         }
+
+        ArrayList<Article> test = Utilities.jsonToArticlesArray("SputnikNews");
+        System.out.println(test.get(0).getTitle());
     }
 }
