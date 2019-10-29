@@ -37,6 +37,10 @@ public class SputnikNews extends Site {
                 System.out.println(e.getMessage());
             }
 
+            if(articleText.length() <= 10) {
+                continue;
+            }
+
             getArticles().add(new Article(entry.getAuthor(), entry.getTitle(), entry.getPublishedDate(),
                     Jsoup.parse(entry.getDescription().getValue()).text(), articleText, entry.getLink()));
             articleCounter++;

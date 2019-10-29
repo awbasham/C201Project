@@ -78,6 +78,9 @@ public abstract class Site {
 
     public boolean isLocalUpToDate(SyndFeed feed) {
         ArrayList<Article> existingArticles = Utilities.jsonToArticleArray(getName().replaceAll(" ", ""));
+        if(existingArticles == null) {
+            return false;
+        }
         if(feed.getEntries().get(feed.getEntries().size() - 1).getTitle().equals(existingArticles.get(existingArticles.size() - 1).getTitle())) {
             System.out.println("Local JSON Up-to-date for " + getName() + ". No need to fetch!");
             setArticles(existingArticles);

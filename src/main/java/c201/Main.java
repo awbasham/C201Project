@@ -1,16 +1,19 @@
 package c201;
 
-import c201.analyze.Histogram;
-import c201.analyze.OpenNLP;
+import c201.analyze.Algorithms;
+import c201.sites.FoxNews;
 import c201.sites.SputnikNews;
 import c201.sites.VeteransToday;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
         try {
+            FoxNews foxNews = new FoxNews("Fox News", "www.foxnews.com", "https://feeds.foxnews.com/foxnews/latest");
+            foxNews.fetchArticles();
+
             SputnikNews sputnikNews = new SputnikNews("Sputnik News", "www.sputniknews.com", "https://sputniknews.com/export/rss2/archive/index.xml");
             sputnikNews.fetchArticles();
 
@@ -19,22 +22,40 @@ public class Main {
 
             Utilities.articlesToJsonFile(veteransToday.getArticles(), veteransToday.getName().replaceAll(" ", ""));
             Utilities.articlesToJsonFile(sputnikNews.getArticles(), sputnikNews.getName().replaceAll(" ", ""));
+            Utilities.articlesToJsonFile(foxNews.getArticles(), foxNews.getName().replaceAll(" ", ""));
 
-            //Experimental code with OpenNLP and Histogram
-            OpenNLP openNLP = new OpenNLP();
-            Histogram histogram = new Histogram();
+            ArrayList<Site> sites = new ArrayList<>();
+            sites.add(sputnikNews);
+            sites.add(veteransToday);
+            sites.add(foxNews);
 
-            for(Article article : sputnikNews.getArticles()) {
-                ArrayList<String> arr = openNLP.getNounGroups(article.getDescription());
-                for(String string : arr) {
-                    histogram.add(string);
+            Map<Article, ArrayList<SimilarArticle>> map = Algorithms.lsaCosineSimilarity(sites, 0.6, 50, true, true);
+            List<Map.Entry<Article, ArrayList<SimilarArticle>>> list = new LinkedList<>(map.entrySet());
+            list.sort(Comparator.comparingInt(t -> t.getValue().size()));
+
+            /*for(int i = 0; i < list.size(); i++) {
+                for(int j = 0; j < list.get(i).getValue().size(); j++) {
+                    if(list.get(i).getValue().get(j).getFromSite().equals(foxNews)) {
+                        System.out.println(list.get(i).getValue().get(j).getTitle());
+                        System.out.println(list.get(i).getValue().get(j).getCosineCoeff());
+                        System.out.println(list.get(i).getKey().getTitle());
+                        System.out.println(list.get(i).getKey().getUrl());
+                        System.out.println();
+                    }
                 }
+            }*/
+
+            System.out.println(map.size());
+            for(int i = 0; i < list.get(list.size() - 1).getValue().size(); i++) {
+                System.out.println(list.get(list.size() - 1).getValue().get(i).getFromSite().getName());
+                System.out.println(list.get(list.size() - 1).getValue().get(i).getTitle());
+                System.out.println(list.get(list.size() - 1).getValue().get(i).getCosineCoeff());
+                System.out.println();
             }
-
-            System.out.println(histogram.sortAscending().toString());
-
+            System.out.println(list.get(list.size() - 1).getKey().getTitle());
+            System.out.println(list.get(list.size() - 1).getKey().getUrl());
         } catch (Exception e) {
-            System.out.println("Error");
+            e.printStackTrace();
         }
     }
 }

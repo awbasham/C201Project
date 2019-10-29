@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class Utilities {
 
@@ -28,8 +31,8 @@ public class Utilities {
     public static ArrayList<Article> jsonToArticleArray(String filename) {
         File file = new File("articles/" + filename + ".json");
         if(!file.exists()) {
-            System.out.println("File " + filename + ".json not found. Please verify filename. Exiting.");
-            System.exit(0);
+            System.out.println("File " + filename + ".json not found.");
+            return null;
         }
 
         ArrayList<Article> returnArr = new ArrayList<>();
@@ -41,5 +44,36 @@ public class Utilities {
         }
 
         return returnArr;
+    }
+
+    public static String getAlphanumericString(String s) {
+        return s.replaceAll("[^a-zA-Z0-9]", " ").replaceAll(" {2}", " ");
+    }
+
+    public static ArrayList<String> getStopWords() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File(Utilities.class.getClassLoader().getResource("en_stop_words.txt").getPath())));
+            ArrayList<String> stops = new ArrayList<>();
+
+            String line = reader.readLine();
+            while (line != null) {
+                stops.add(line);
+                line = reader.readLine();
+            }
+            reader.close();
+
+            stops.sort(Comparator.comparing(String::length));
+            return stops;
+        } catch(Exception e) {
+            System.out.println(e.getMessage() + " " + e.getCause());
+        }
+        return null;
+    }
+
+    public static String removeStopWords(String s, ArrayList<String> stops) {
+        s = getAlphanumericString(s).toLowerCase();
+        List<String> tokenizedString = new ArrayList<>(Arrays.asList(s.split(" ")));
+        tokenizedString.removeAll(stops);
+        return String.join(" ", tokenizedString);
     }
 }

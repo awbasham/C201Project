@@ -1,7 +1,9 @@
 package c201.analyze;
 
+import c201.Utilities;
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
+import opennlp.tools.lemmatizer.DictionaryLemmatizer;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.tokenize.WhitespaceTokenizer;
@@ -12,16 +14,25 @@ import java.util.ArrayList;
 public class OpenNLP {
     private POSModel model;
     private WhitespaceTokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
+    private DictionaryLemmatizer lemmatizer;
 
     public OpenNLP() {
         try {
             //Loading Parts of speech-maxent model
             InputStream inputStream = OpenNLP.class.getClassLoader().getResourceAsStream("en-pos-maxent.bin");
+            InputStream dictionary = OpenNLP.class.getClassLoader().getResourceAsStream("en-lemmatizer.dict");
             if(inputStream == null) {
                 System.out.println("Failed to load en-pos-maxent.bin file! Exiting.");
                 System.exit(0);
             }
+            if(dictionary == null) {
+                System.out.println("Failed to load en-lemmatizer.dict file! Exiting.");
+                System.exit(0);
+            }
+            lemmatizer = new DictionaryLemmatizer(dictionary);
             model = new POSModel(inputStream);
+            dictionary.close();
+            inputStream.close();
         } catch(Exception e) {
             System.out.println(e.getMessage() + " " + e.getCause());
         }
@@ -89,10 +100,39 @@ public class OpenNLP {
                 }
             }
 
+            inputStream.close();
             return nouns;
         } catch(Exception e) {
             System.out.println(e.getMessage() + " " + e.getCause());
         }
         return null;
+    }
+
+    /*
+    Convert words to Lemma form if possible. Lemma = words of different "form" that all have same meaning.
+    See https://en.wikipedia.org/wiki/Lemmatisation
+     */
+    public String lemmatize(String s) {
+        s = Utilities.getAlphanumericString(s).toLowerCase();
+        String returnString = "";
+        try {
+            POSTaggerME tagger = new POSTaggerME(model);
+            String[] tokens = tokenizer.tokenize(s);
+            String[] tags = tagger.tag(tokens);
+
+            String[] lemmas = lemmatizer.lemmatize(tokens, tags);
+
+            for(int i = 0; i < tokens.length; i++) {
+                if(!lemmas[i].equals("O")) {
+                    tokens[i] = lemmas[i];
+                }
+            }
+
+            returnString = String.join(" ", tokens);
+        } catch (Exception e) {
+            System.out.println(e.getMessage() + " " + e.getCause());
+        }
+
+        return returnString;
     }
 }

@@ -51,4 +51,12 @@ public class Article {
     public String getUrl() {
         return url;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Article) {
+            return ((Article) obj).getUrl().equals(this.getUrl());
+        }
+        return false;
+    }
 }
