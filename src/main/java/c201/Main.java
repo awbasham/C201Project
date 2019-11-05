@@ -4,6 +4,7 @@ import c201.analyze.Algorithms;
 import c201.sites.FoxNews;
 import c201.sites.SputnikNews;
 import c201.sites.VeteransToday;
+import c201.sites.Tass;
 
 import java.util.*;
 
@@ -20,14 +21,19 @@ public class Main {
             VeteransToday veteransToday = new VeteransToday("Veterans Today", "www.veteranstoday.com", "https://www.veteranstoday.com/feed/");
             veteransToday.fetchArticles();
 
+            Tass tass = new Tass("Tass News", "www.tass.com", "http://tass.com/rss/v2.xml");
+            tass.fetchArticles();
+
             Utilities.articlesToJsonFile(veteransToday.getArticles(), veteransToday.getName().replaceAll(" ", ""));
             Utilities.articlesToJsonFile(sputnikNews.getArticles(), sputnikNews.getName().replaceAll(" ", ""));
             Utilities.articlesToJsonFile(foxNews.getArticles(), foxNews.getName().replaceAll(" ", ""));
+            Utilities.articlesToJsonFile(tass.getArticles(), tass.getName().replaceAll(" ", ""));
 
             ArrayList<Site> sites = new ArrayList<>();
             sites.add(sputnikNews);
             sites.add(veteransToday);
             sites.add(foxNews);
+            sites.add(tass);
 
             Map<Article, ArrayList<SimilarArticle>> map = Algorithms.lsaCosineSimilarity(sites, 0.6, 50, true, true);
             List<Map.Entry<Article, ArrayList<SimilarArticle>>> list = new LinkedList<>(map.entrySet());
