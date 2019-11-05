@@ -2,6 +2,7 @@ package c201.sites;
 
 import c201.Article;
 import c201.Site;
+import c201.Utilities;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import org.jsoup.Jsoup;
@@ -50,5 +51,6 @@ public class VeteransToday extends Site {
                     Jsoup.parse(entry.getDescription().getValue()).text(), articleText, entry.getLink()));
             articleCounter++;
         }
+        Utilities.articlesToJsonFile(getArticles(), getName().replaceAll(" ", ""));
     }
 }

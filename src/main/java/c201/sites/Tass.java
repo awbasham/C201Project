@@ -2,6 +2,7 @@ package c201.sites;
 
 import c201.Article;
 import c201.Site;
+import c201.Utilities;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import org.jsoup.Jsoup;
@@ -32,7 +33,7 @@ public class Tass extends Site {
 
             try {
                 Document doc = Jsoup.connect(entry.getLink()).get();
-                articleText = doc.selectFirst(".b-article__text").text();
+                articleText = doc.selectFirst(".text-content").text();
             } catch(Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -41,9 +42,15 @@ public class Tass extends Site {
                 continue;
             }
 
-            getArticles().add(new Article(entry.getAuthor(), entry.getTitle(), entry.getPublishedDate(),
-                    Jsoup.parse(entry.getDescription().getValue()).text(), articleText, entry.getLink()));
+            if(entry.getDescription() == null) {
+                getArticles().add(new Article(entry.getAuthor(), entry.getTitle(), entry.getPublishedDate(),
+                        "", articleText, entry.getLink()));
+            } else {
+                getArticles().add(new Article(entry.getAuthor(), entry.getTitle(), entry.getPublishedDate(),
+                        Jsoup.parse(entry.getDescription().getValue()).text(), articleText, entry.getLink()));
+            }
             articleCounter++;
         }
+        Utilities.articlesToJsonFile(getArticles(), getName().replaceAll(" ", ""));
     }
 }

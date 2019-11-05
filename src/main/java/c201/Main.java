@@ -24,11 +24,6 @@ public class Main {
             Tass tass = new Tass("Tass News", "www.tass.com", "http://tass.com/rss/v2.xml");
             tass.fetchArticles();
 
-            Utilities.articlesToJsonFile(veteransToday.getArticles(), veteransToday.getName().replaceAll(" ", ""));
-            Utilities.articlesToJsonFile(sputnikNews.getArticles(), sputnikNews.getName().replaceAll(" ", ""));
-            Utilities.articlesToJsonFile(foxNews.getArticles(), foxNews.getName().replaceAll(" ", ""));
-            Utilities.articlesToJsonFile(tass.getArticles(), tass.getName().replaceAll(" ", ""));
-
             ArrayList<Site> sites = new ArrayList<>();
             sites.add(sputnikNews);
             sites.add(veteransToday);
