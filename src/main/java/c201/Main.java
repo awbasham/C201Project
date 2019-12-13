@@ -14,19 +14,18 @@ public class Main {
         try {
             FoxNews foxNews = new FoxNews("Fox News", "www.foxnews.com", "https://feeds.foxnews.com/foxnews/latest");
             foxNews.fetchArticles();
+            Utilities.articlesToJsonFile(foxNews.getArticles(), foxNews.getName().replaceAll(" ", ""));
 
             SputnikNews sputnikNews = new SputnikNews("Sputnik News", "www.sputniknews.com", "https://sputniknews.com/export/rss2/archive/index.xml");
             sputnikNews.fetchArticles();
+            Utilities.articlesToJsonFile(sputnikNews.getArticles(), sputnikNews.getName().replaceAll(" ", ""));
 
             VeteransToday veteransToday = new VeteransToday("Veterans Today", "www.veteranstoday.com", "https://www.veteranstoday.com/feed/");
             veteransToday.fetchArticles();
+            Utilities.articlesToJsonFile(veteransToday.getArticles(), veteransToday.getName().replaceAll(" ", ""));
 
             Tass tass = new Tass("Tass News", "www.tass.com", "http://tass.com/rss/v2.xml");
             tass.fetchArticles();
-
-            Utilities.articlesToJsonFile(veteransToday.getArticles(), veteransToday.getName().replaceAll(" ", ""));
-            Utilities.articlesToJsonFile(sputnikNews.getArticles(), sputnikNews.getName().replaceAll(" ", ""));
-            Utilities.articlesToJsonFile(foxNews.getArticles(), foxNews.getName().replaceAll(" ", ""));
             Utilities.articlesToJsonFile(tass.getArticles(), tass.getName().replaceAll(" ", ""));
 
             ArrayList<Site> sites = new ArrayList<>();
@@ -62,6 +61,7 @@ public class Main {
             System.out.println(list.get(list.size() - 1).getKey().getUrl());
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage() + " " + e.getCause());
         }
     }
 }
